@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080a15">
+<title>مولّد صور الأسئلة | MISSION EDU</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.468.0/font/lucide.css">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="ambient ambient-one"></div>
+<div class="ambient ambient-two"></div>
+
+<header class="topbar">
+    <a class="brand" href="#">
+        <span class="brand-mark">M</span>
+        <span class="brand-name">
+            MISSION <b>EDU</b>
+            <small>QUESTION STUDIO</small>
+        </span>
+    </a>
+
+    <div class="top-actions">
+        <span class="status-pill"><span></span> جاهز للاستخدام</span>
+    </div>
+</header>
+
+<main class="container">
+
+<section class="hero animate__animated animate__fadeInDown">
+    <div class="eyebrow">✦ QUESTION DESIGN STUDIO</div>
+
+    <h1>
+        حوّل سؤالك إلى
+        <span class="gradient-text">صورة احترافية</span>
+    </h1>
+
+    <p>
+        اكتب السؤال والاختيارات، خصّص التصميم،
+        وحمّل صورة PNG جاهزة للمشاركة.
+    </p>
+</section>
+
+<div class="workspace">
+
+<section class="panel editor-panel">
+
+    <div class="panel-heading">
+        <div class="heading-icon">
+            <i class="icon icon-pencil-line"></i>
+        </div>
+
+        <div>
+            <h2>محتوى السؤال</h2>
+            <p>أدخل بيانات السؤال الذي تريد تصميمه</p>
+        </div>
+    </div>
+
+    <form id="questionForm">
+
+        <label class="field-label" for="question">
+            نص السؤال <span class="required">*</span>
+        </label>
+
+        <textarea id="question" rows="3" maxlength="600"
+            placeholder="اكتب نص السؤال هنا..." required></textarea>
+
+        <div class="field-meta">
+            <span>اكتب السؤال بوضوح</span>
+            <span id="questionCount">0 / 600</span>
+        </div>
+
+        <div class="label-row">
+            <label class="field-label">الاختيارات</label>
+            <span class="hint">يمكنك ترك أي اختيار فارغًا</span>
+        </div>
+
+        <div class="options-list">
+
+            <div class="option-input">
+                <span class="option-letter">أ</span>
+                <input id="optionA" maxlength="220" placeholder="الاختيار الأول">
+            </div>
+
+            <div class="option-input">
+                <span class="option-letter">ب</span>
+                <input id="optionB" maxlength="220" placeholder="الاختيار الثاني">
+            </div>
+
+            <div class="option-input">
+                <span class="option-letter">ج</span>
+                <input id="optionC" maxlength="220" placeholder="الاختيار الثالث">
+            </div>
+
+            <div class="option-input">
+                <span class="option-letter">د</span>
+                <input id="optionD" maxlength="220" placeholder="الاختيار الرابع">
+            </div>
+
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-label">
+            الإجابة الصحيحة
+            <span class="optional">اختياري</span>
+        </div>
+
+        <div class="correct-grid">
+
+            <label class="correct-choice">
+                <input type="radio" name="correct" value="A">
+                <span>أ</span>
+            </label>
+
+            <label class="correct-choice">
+                <input type="radio" name="correct" value="B">
+                <span>ب</span>
+            </label>
+
+            <label class="correct-choice">
+                <input type="radio" name="correct" value="C">
+                <span>ج</span>
+            </label>
+
+            <label class="correct-choice">
+                <input type="radio" name="correct" value="D">
+                <span>د</span>
+            </label>
+
+            <button type="button" id="clearCorrect" class="clear-choice">
+                إلغاء التحديد
+            </button>
+
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="label-row">
+            <label class="field-label" for="watermark">
+                العلامة المائية
+                <span class="optional">اختياري</span>
+            </label>
+
+            <label class="switch">
+                <input id="watermarkToggle" type="checkbox" checked>
+                <span class="slider"></span>
+            </label>
+        </div>
+
+        <input class="text-input" id="watermark"
+            maxlength="70" value="MISSION EDU"
+            placeholder="اكتب العلامة المائية">
+
+        <p class="field-note">
+            يمكنك إخفاء العلامة المائية أو ترك الحقل فارغًا.
+        </p>
+
+        <div class="divider"></div>
+
+        <label class="field-label">قالب الصورة</label>
+
+        <div class="themes">
+
+            <button type="button" class="theme-card active" data-theme="neon">
+                <span class="theme-swatch neon-swatch"></span>
+                <b>نيون</b>
+                <small>بنفسجي وأزرق</small>
+            </button>
+
+            <button type="button" class="theme-card" data-theme="paper">
+                <span class="theme-swatch paper-swatch"></span>
+                <b>رسمي</b>
+                <small>أبيض وكحلي</small>
+            </button>
+
+            <button type="button" class="theme-card" data-theme="aurora">
+                <span class="theme-swatch aurora-swatch"></span>
+                <b>عصري</b>
+                <small>تدرجات لونية</small>
+            </button>
+
+        </div>
+
+        <div class="action-row">
+
+            <button class="primary-button" type="submit">
+                <i class="icon icon-sparkles"></i>
+                توليد الصورة
+            </button>
+
+            <button class="secondary-button" id="resetBtn" type="button">
+                <i class="icon icon-rotate-ccw"></i>
+            </button>
+
+        </div>
+
+        <p id="formMessage" class="form-message" aria-live="polite"></p>
+
+    </form>
+
+</section>
+
+<section class="panel preview-panel">
+
+    <div class="panel-heading">
+        <div class="heading-icon preview-icon">
+            <i class="icon icon-image"></i>
+        </div>
+
+        <div>
+            <h2>معاينة التصميم</h2>
+            <p>شاهد شكل الصورة قبل تحميلها</p>
+        </div>
+    </div>
+
+    <div class="preview-toolbar">
+        <span>● معاينة مباشرة</span>
+        <span class="size-tag">1080 × 1080 px</span>
+    </div>
+
+    <div class="canvas-wrap">
+        <canvas id="previewCanvas" width="1080" height="1080"></canvas>
+    </div>
+
+    <div class="preview-footer">
+
+        <div class="file-info">
+            <div class="file-icon">
+                <i class="icon icon-file-image"></i>
+            </div>
+
+            <div>
+                <b>question.png</b>
+                <small>PNG · جودة عالية</small>
+            </div>
+        </div>
+
+        <button id="downloadBtn" class="download-button" type="button">
+            <i class="icon icon-download"></i>
+            تحميل PNG
+        </button>
+
+    </div>
+
+    <div class="tip-box">
+        <span>💡</span>
+        <p>
+            <b>نصيحة:</b>
+            اكتب السؤال والاختيارات بوضوح للحصول على تصميم أفضل.
+        </p>
+    </div>
+
+</section>
+
+</div>
+
+<section class="features">
+
+    <div class="feature">
+        <span><i class="icon icon-image"></i></span>
+        <div>
+            <b>تصدير PNG</b>
+            <small>صورة عالية الدقة</small>
+        </div>
+    </div>
+
+    <div class="feature">
+        <span><i class="icon icon-sliders-horizontal"></i></span>
+        <div>
+            <b>تحكم كامل</b>
+            <small>الإجابة والعلامة المائية اختياريتان</small>
+        </div>
+    </div>
+
+    <div class="feature">
+        <span><i class="icon icon-smartphone"></i></span>
+        <div>
+            <b>متجاوب</b>
+            <small>يعمل على الموبايل والكمبيوتر</small>
+        </div>
+    </div>
+
+</section>
+
+</main>
+
+<footer class="footer">
+    <div class="footer-line"></div>
+    <p>صُنع بشغف للمبدعين والمعلمين</p>
+    <div class="footer-credit">
+        Developed by <span>EL-sayed Hasan</span>
+    </div>
+    <small>MISSION EDU · QUESTION STUDIO</small>
+</footer>
+
+<script src="script.js"></script>
+
+</body>
+</html>
