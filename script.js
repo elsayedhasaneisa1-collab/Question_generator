@@ -1,455 +1,688 @@
-(() => {
-    const $ = id => document.getElementById(id);
-    const canvas = $("previewCanvas");
-    const ctx = canvas.getContext("2d");
-
-    const optionIds = ["optionA", "optionB", "optionC", "optionD"];
-    const letters = ["أ", "ب", "ج", "د"];
-
-    let theme = "neon";
-
-    const themes = {
-        neon: {
-            bg: "#090b18",
-            card: "#12162b",
-            border: "#34315b",
-            text: "#f7f7ff",
-            muted: "#a1a8c8",
-            accent: "#9a78ff",
-            accent2: "#50d6ff",
-            option: "#1b203b",
-            optionBorder: "#333b62",
-            correct: "#123e35",
-            correctBorder: "#43e8b3",
-            correctText: "#76f6cc"
-        },
-
-        paper: {
-            bg: "#f1f4fa",
-            card: "#ffffff",
-            border: "#d8dfec",
-            text: "#17243e",
-            muted: "#66748e",
-            accent: "#274d83",
-            accent2: "#4e76a8",
-            option: "#f6f8fc",
-            optionBorder: "#dce3ef",
-            correct: "#e0f6ec",
-            correctBorder: "#22996f",
-            correctText: "#116e4e"
-        },
-
-        aurora: {
-            bg: "#101329",
-            card: "#171c35",
-            border: "#35446a",
-            text: "#f7fbff",
-            muted: "#b0bad4",
-            accent: "#bb86ff",
-            accent2: "#55e5d2",
-            option: "#202945",
-            optionBorder: "#3d4d70",
-            correct: "#173f3b",
-            correctBorder: "#56e7c5",
-            correctText: "#8affdf"
-        }
-    };
-
-    function roundedRect(x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + w, y, x + w, y + h, r);
-        ctx.arcTo(x + w, y + h, x, y + h, r);
-        ctx.arcTo(x, y + h, x, y, r);
-        ctx.arcTo(x, y, x + w, y, r);
-        ctx.closePath();
-    }
-
-    function wrapText(text, maxWidth, font) {
-        ctx.font = font;
-
-        const words = String(text || "").trim().split(/\s+/).filter(Boolean);
-        if (!words.length) return [""];
-
-        const lines = [];
-        let line = "";
-
-        for (const word of words) {
-            const test = line ? line + " " + word : word;
-
-            if (ctx.measureText(test).width > maxWidth && line) {
-                lines.push(line);
-                line = word;
-            } else {
-                line = test;
-            }
-        }
-
-        if (line) lines.push(line);
-
-        return lines;
-    }
-
-    function drawLines(text, x, y, maxWidth, font, color, lineHeight) {
-        const lines = wrapText(text, maxWidth, font);
-
-        ctx.font = font;
-        ctx.fillStyle = color;
-        ctx.textAlign = "right";
-        ctx.textBaseline = "top";
-
-        lines.forEach((line, index) => {
-            ctx.fillText(line, x, y + index * lineHeight, maxWidth);
-        });
+"use strict";
 
-        return lines.length * lineHeight;
-    }
-
-    function getCorrect() {
-        const selected = document.querySelector(
-            'input[name="correct"]:checked'
-        );
+const canvas = document.getElementById("questionCanvas");
+const ctx = canvas.getContext("2d");
 
-        return selected ? selected.value : "";
-    }
-
-    function drawWatermark(t) {
-        const enabled = $("watermarkToggle").checked;
-        const label = $("watermark").value.trim();
-
-        if (!enabled || !label) return;
-
-        ctx.save();
-
-        ctx.globalAlpha = theme === "paper" ? 0.055 : 0.075;
-        ctx.fillStyle = t.text;
-        ctx.font = "900 54px Cairo, sans-serif";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-
-        ctx.translate(540, 540);
-        ctx.rotate(-Math.PI / 5);
-
-        for (let y = -900; y <= 900; y += 210) {
-            for (let x = -900; x <= 900; x += 500) {
-                ctx.fillText(label, x, y);
-            }
-        }
-
-        ctx.restore();
-    }
-
-    function draw() {
-        const t = themes[theme];
-        const question = $("question").value.trim();
-        const options = optionIds.map(id => $(id).value.trim());
-        const correct = getCorrect();
-
-        ctx.clearRect(0, 0, 1080, 1080);
-
-        ctx.fillStyle = t.bg;
-        ctx.fillRect(0, 0, 1080, 1080);
-
-        if (theme !== "paper") {
-            const glow = ctx.createRadialGradient(
-                860, 80, 10, 860, 80, 600
-            );
-
-            glow.addColorStop(
-                0,
-                theme === "aurora" ? "#1b8d9b44" : "#7348df44"
-            );
-
-            glow.addColorStop(1, "#090b1800");
-
-            ctx.fillStyle = glow;
-            ctx.fillRect(0, 0, 1080, 1080);
-        }
-
-        drawWatermark(t);
-
-        // بطاقة السؤال
-        ctx.save();
-        ctx.shadowColor = theme === "paper" ? "#15284a10" : "#0008";
-        ctx.shadowBlur = 35;
-        ctx.shadowOffsetY = 15;
-
-        roundedRect(76, 64, 928, 952, 34);
-        ctx.fillStyle = t.card;
-        ctx.fill();
-
-        ctx.restore();
-
-        roundedRect(76, 64, 928, 952, 34);
-        ctx.strokeStyle = t.border;
-        ctx.lineWidth = 2;
-        ctx.stroke();
-
-        // الشريط العلوي
-        const gradient = ctx.createLinearGradient(130, 0, 950, 0);
-        gradient.addColorStop(0, t.accent);
-        gradient.addColorStop(1, t.accent2);
-
-        roundedRect(130, 112, 820, 7, 4);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-
-        // شارة السؤال
-        roundedRect(730, 151, 220, 52, 15);
-        ctx.fillStyle = theme === "paper" ? "#edf2fb" : "#252343";
-        ctx.fill();
-
-        ctx.font = "800 21px Cairo, sans-serif";
-        ctx.fillStyle = t.accent;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText("سؤال وتحدّي", 840, 177);
-
-        // نص السؤال
-        const questionText = question || "اكتب نص السؤال ليظهر هنا";
-        let questionFont = 38;
-
-        if (
-            wrapText(questionText, 810, "800 38px Cairo, sans-serif").length > 4
-        ) {
-            questionFont = 30;
-        }
-
-        const questionHeight = drawLines(
-            questionText,
-            930,
-            237,
-            810,
-            `800 ${questionFont}px Cairo, sans-serif`,
-            t.text,
-            questionFont + 21
-        );
-
-        // مساحة الاختيارات تتكيف مع طول السؤال
-        const optionStart = Math.max(390, 237 + questionHeight + 40);
-        const visibleOptions = options
-            .map((value, index) => ({ value, index }))
-            .filter(item => item.value);
-
-        const availableHeight = 870 - optionStart;
-        const count = Math.max(visibleOptions.length, 1);
-
-        let rowHeight = Math.min(
-            112,
-            Math.floor((availableHeight - (count - 1) * 14) / count)
-        );
-
-        rowHeight = Math.max(65, rowHeight);
-
-        let y = optionStart;
-
-        visibleOptions.forEach(({ value, index }) => {
-            const key = ["A", "B", "C", "D"][index];
-            const isCorrect = correct === key;
-
-            roundedRect(130, y, 820, rowHeight, 19);
-
-            ctx.fillStyle = isCorrect ? t.correct : t.option;
-            ctx.fill();
-
-            ctx.strokeStyle = isCorrect
-                ? t.correctBorder
-                : t.optionBorder;
-
-            ctx.lineWidth = isCorrect ? 3 : 2;
-            ctx.stroke();
-
-            // مربع حرف الاختيار
-            roundedRect(
-                855,
-                y + (rowHeight - 48) / 2,
-                60,
-                48,
-                13
-            );
-
-            ctx.fillStyle = isCorrect
-                ? t.correctBorder
-                : (theme === "paper" ? "#e4ebf7" : "#303052");
-
-            ctx.fill();
-
-            ctx.font = "800 24px Cairo, sans-serif";
-            ctx.fillStyle = isCorrect
-                ? (theme === "paper" ? "#ffffff" : "#06241c")
-                : t.accent2;
-
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            ctx.fillText(letters[index], 885, y + rowHeight / 2);
-
-            // نص الاختيار
-            const fontSize = rowHeight < 85 ? 20 : 25;
-            const font = `600 ${fontSize}px Cairo, sans-serif`;
-            const lineHeight = fontSize + 9;
-
-            const lines = wrapText(value, 660, font);
-            const maxLines = Math.max(
-                1,
-                Math.floor((rowHeight - 14) / lineHeight)
-            );
-
-            const displayedLines = lines.slice(0, maxLines);
-
-            ctx.font = font;
-            ctx.fillStyle = isCorrect ? t.correctText : t.text;
-            ctx.textAlign = "right";
-            ctx.textBaseline = "middle";
-
-            const firstY =
-                y + rowHeight / 2 -
-                ((displayedLines.length - 1) * lineHeight) / 2;
-
-            displayedLines.forEach((line, i) => {
-                ctx.fillText(line, 825, firstY + i * lineHeight, 660);
-            });
-
-            if (isCorrect) {
-                ctx.font = "700 17px Arial";
-                ctx.fillStyle = t.correctText;
-                ctx.textAlign = "left";
-                ctx.fillText("✓", 155, y + rowHeight / 2);
-            }
-
-            y += rowHeight + 14;
-        });
-
-        // التذييل داخل الصورة
-        ctx.strokeStyle = t.border;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(130, 945);
-        ctx.lineTo(950, 945);
-        ctx.stroke();
-
-        ctx.font = "800 19px Arial, sans-serif";
-        ctx.textAlign = "left";
-        ctx.textBaseline = "middle";
-
-        ctx.fillStyle = t.accent;
-        ctx.fillText("MISSION", 130, 975);
-
-        ctx.fillStyle = theme === "paper" ? "#b18120" : "#f1ce77";
-        ctx.fillText("EDU", 222, 975);
-
-        ctx.font = "500 15px Cairo, sans-serif";
-        ctx.fillStyle = t.muted;
-        ctx.textAlign = "right";
-        ctx.fillText("تعلّم • تحدَّ • انتصر", 950, 975);
-    }
-
-    function updateCounter() {
-        $("questionCount").textContent =
-            `${$("question").value.length} / 600`;
-    }
-
-    function message(text, error = false) {
-        $("formMessage").textContent = text;
-        $("formMessage").style.color = error ? "#ff8da6" : "#63e7b7";
-    }
-
-    $("questionForm").addEventListener("submit", event => {
-        event.preventDefault();
-
-        if (!$("question").value.trim()) {
-            message("اكتب نص السؤال أولًا.", true);
-            $("question").focus();
-            return;
-        }
-
-        draw();
-        message("تم توليد الصورة بنجاح، يمكنك تحميلها الآن.");
-    });
-
-    $("downloadBtn").addEventListener("click", () => {
-        if (!$("question").value.trim()) {
-            message("اكتب نص السؤال أولًا ثم اضغط توليد الصورة.", true);
-            $("question").focus();
-            return;
-        }
-
-        draw();
-
-        canvas.toBlob(blob => {
-            if (!blob) {
-                message("تعذّر إنشاء الصورة. جرّب متصفحًا أحدث.", true);
-                return;
-            }
-
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-
-            link.href = url;
-            link.download = "mission-edu-question.png";
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-
-            message("بدأ تحميل صورة PNG.");
-        }, "image/png");
-    });
-
-    $("clearCorrect").addEventListener("click", () => {
-        document.querySelectorAll('input[name="correct"]')
-            .forEach(input => input.checked = false);
-
-        draw();
-    });
-
-    $("watermarkToggle").addEventListener("change", draw);
-
-    document.querySelectorAll(".theme-card").forEach(button => {
-        button.addEventListener("click", () => {
-            document.querySelectorAll(".theme-card")
-                .forEach(item => item.classList.remove("active"));
-
-            button.classList.add("active");
-            theme = button.dataset.theme;
-            draw();
-        });
-    });
-
-    $("resetBtn").addEventListener("click", () => {
-        $("question").value = "";
-
-        optionIds.forEach(id => $(id).value = "");
-
-        $("watermark").value = "";
-        $("watermarkToggle").checked = false;
-
-        document.querySelectorAll('input[name="correct"]')
-            .forEach(input => input.checked = false);
-
-        updateCounter();
-        draw();
-        message("تمت إعادة ضبط الحقول.");
-    });
-
-    ["question", ...optionIds, "watermark"].forEach(id => {
-        $(id).addEventListener("input", () => {
-            if (id === "question") updateCounter();
-            draw();
-        });
-    });
-
-    document.querySelectorAll('input[name="correct"]')
-        .forEach(input => input.addEventListener("change", draw));
-
-    // تحميل الخط العربي قبل رسم المعاينة
-    if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => {
-            updateCounter();
-            draw();
-        });
+const form = document.getElementById("questionForm");
+const questionInput = document.getElementById("question");
+const questionCount = document.getElementById("questionCount");
+const correctAnswerInput = document.getElementById("correctAnswer");
+const watermarkInput = document.getElementById("watermark");
+const imageSizeInput = document.getElementById("imageSize");
+const downloadButton = document.getElementById("downloadButton");
+const generateButton = document.getElementById("generateButton");
+const resetButton = document.getElementById("resetButton");
+const previewPlaceholder = document.getElementById("previewPlaceholder");
+const toast = document.getElementById("toast");
+
+let selectedTemplate = "neon";
+let imageGenerated = false;
+let toastTimer = null;
+
+document.getElementById("currentYear").textContent =
+new Date().getFullYear();
+
+questionInput.addEventListener("input", () => {
+questionCount.textContent = "${questionInput.value.length} / 1200";
+});
+
+document.querySelectorAll(".template-card").forEach((button) => {
+button.addEventListener("click", () => {
+document.querySelectorAll(".template-card").forEach((card) => {
+card.classList.remove("active");
+});
+
+button.classList.add("active");
+selectedTemplate = button.dataset.template;
+
+if (imageGenerated) {
+  generateImage(false);
+}
+
+});
+});
+
+imageSizeInput.addEventListener("change", () => {
+if (imageGenerated) {
+generateImage(false);
+}
+});
+
+form.addEventListener("submit", (event) => {
+event.preventDefault();
+
+if (!form.reportValidity()) {
+return;
+}
+
+generateImage(true);
+});
+
+resetButton.addEventListener("click", () => {
+const shouldReset = window.confirm("هل تريد مسح السؤال والاختيارات؟");
+
+if (!shouldReset) return;
+
+form.reset();
+
+selectedTemplate = "neon";
+
+document.querySelectorAll(".template-card").forEach((card) => {
+card.classList.toggle("active", card.dataset.template === "neon");
+});
+
+questionCount.textContent = "0 / 1200";
+imageGenerated = false;
+
+canvas.style.display = "none";
+previewPlaceholder.style.display = "block";
+downloadButton.disabled = true;
+
+canvas.width = 1080;
+canvas.height = 1080;
+
+showToast("تم مسح البيانات.");
+});
+
+downloadButton.addEventListener("click", () => {
+if (!imageGenerated) {
+showToast("أنشئ الصورة أولًا.");
+return;
+}
+
+canvas.toBlob((blob) => {
+if (!blob) {
+showToast("حصلت مشكلة أثناء تجهيز الصورة.");
+return;
+}
+
+const objectURL = URL.createObjectURL(blob);
+const link = document.createElement("a");
+
+link.href = objectURL;
+link.download = `mission-edu-question-${Date.now()}.png`;
+
+document.body.appendChild(link);
+link.click();
+link.remove();
+
+setTimeout(() => URL.revokeObjectURL(objectURL), 1500);
+
+showToast("تم تجهيز الصورة للتنزيل.");
+
+}, "image/png");
+});
+
+function getQuestionData() {
+return {
+question: questionInput.value.trim(),
+options: [
+document.getElementById("optionA").value.trim(),
+document.getElementById("optionB").value.trim(),
+document.getElementById("optionC").value.trim(),
+document.getElementById("optionD").value.trim()
+],
+correct: correctAnswerInput.value,
+watermark: watermarkInput.value.trim()
+};
+}
+
+function getDimensions() {
+switch (imageSizeInput.value) {
+case "story":
+return { width: 1080, height: 1920 };
+
+case "landscape":
+  return { width: 1200, height: 675 };
+
+default:
+  return { width: 1080, height: 1080 };
+
+}
+}
+
+function generateImage(showMessage = true) {
+const data = getQuestionData();
+
+if (!data.question) {
+showToast("اكتب نص السؤال أولًا.");
+questionInput.focus();
+return;
+}
+
+if (data.options.some((option) => !option)) {
+showToast("اكتب الاختيارات الأربعة.");
+return;
+}
+
+const dimensions = getDimensions();
+
+canvas.width = dimensions.width;
+canvas.height = dimensions.height;
+
+drawBackground(dimensions.width, dimensions.height);
+drawHeader(dimensions.width);
+
+const isStory = dimensions.height > dimensions.width;
+const isLandscape = dimensions.width > dimensions.height;
+
+const sidePadding = isLandscape ? 76 : 78;
+const contentWidth = dimensions.width - sidePadding * 2;
+
+const questionTop = isStory ? 310 : isLandscape ? 150 : 255;
+const questionFont = isStory ? 45 : isLandscape ? 42 : 48;
+
+const questionLines = wrapText(
+data.question,
+contentWidth - 75,
+questionFont,
+700
+);
+
+const questionLineHeight = questionFont * 1.65;
+const questionBoxHeight = Math.max(
+175,
+questionLines.length * questionLineHeight + 75
+);
+
+drawRoundedRect(
+sidePadding,
+questionTop,
+contentWidth,
+questionBoxHeight,
+28,
+getCardColor()
+);
+
+drawRoundedRect(
+sidePadding + contentWidth - 9,
+questionTop + 20,
+6,
+questionBoxHeight - 40,
+3,
+getAccentColor()
+);
+
+ctx.save();
+ctx.textAlign = "right";
+ctx.textBaseline = "top";
+ctx.fillStyle = getTextColor();
+ctx.font = "700 ${questionFont}px Cairo, sans-serif";
+
+let questionY = questionTop + 34;
+
+questionLines.forEach((line) => {
+ctx.fillText(
+line,
+dimensions.width - sidePadding - 38,
+questionY,
+contentWidth - 90
+);
+
+questionY += questionLineHeight;
+
+});
+
+ctx.restore();
+
+const optionGap = isStory ? 23 : 18;
+const optionFont = isStory ? 35 : isLandscape ? 29 : 34;
+const optionPadding = isStory ? 29 : 25;
+const optionTop = questionTop + questionBoxHeight + (isStory ? 55 : 40);
+
+const availableBottom = data.watermark
+? dimensions.height - (isStory ? 180 : 110)
+: dimensions.height - (isStory ? 100 : 65);
+
+const availableOptionsHeight =
+availableBottom - optionTop - optionGap * 3;
+
+let optionHeight = Math.min(
+isStory ? 155 : 125,
+availableOptionsHeight / 4
+);
+
+optionHeight = Math.max(70, optionHeight);
+
+data.options.forEach((option, index) => {
+const y = optionTop + index * (optionHeight + optionGap);
+const key = ["A", "B", "C", "D"][index];
+const isCorrect = data.correct === key;
+
+drawOptionCard({
+  x: sidePadding,
+  y,
+  width: contentWidth,
+  height: optionHeight,
+  text: option,
+  letter: ["أ", "ب", "ج", "د"][index],
+  index,
+  isCorrect,
+  fontSize: optionFont,
+  padding: optionPadding
+});
+
+});
+
+drawFooter(dimensions.width, dimensions.height, data.watermark);
+
+canvas.style.display = "block";
+previewPlaceholder.style.display = "none";
+downloadButton.disabled = false;
+imageGenerated = true;
+
+if (showMessage) {
+showToast("تم إنشاء الصورة بنجاح!");
+}
+}
+
+function drawBackground(width, height) {
+const gradient = ctx.createLinearGradient(0, 0, width, height);
+
+if (selectedTemplate === "paper") {
+gradient.addColorStop(0, "#f5f0e5");
+gradient.addColorStop(0.55, "#e8edf7");
+gradient.addColorStop(1, "#d8e3f2");
+} else if (selectedTemplate === "aurora") {
+gradient.addColorStop(0, "#0c253e");
+gradient.addColorStop(0.48, "#39245e");
+gradient.addColorStop(1, "#173e55");
+} else {
+gradient.addColorStop(0, "#090d20");
+gradient.addColorStop(0.55, "#121638");
+gradient.addColorStop(1, "#101d37");
+}
+
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, width, height);
+
+if (selectedTemplate === "paper") {
+drawPaperPattern(width, height);
+} else {
+drawNeonEffects(width, height);
+}
+
+drawRoundedRect(
+16,
+16,
+width - 32,
+height - 32,
+30,
+"rgba(0,0,0,0)"
+);
+
+ctx.strokeStyle = selectedTemplate === "paper"
+? "rgba(37, 60, 95, 0.17)"
+: "rgba(145, 160, 255, 0.25)";
+
+ctx.lineWidth = 2;
+ctx.strokeRect(22, 22, width - 44, height - 44);
+}
+
+function drawNeonEffects(width, height) {
+const circles = [
+{
+x: width * 0.88,
+y: height * 0.09,
+radius: width * 0.24,
+color: selectedTemplate === "aurora" ? "#f05fa8" : "#8d43ff"
+},
+{
+x: width * 0.08,
+y: height * 0.87,
+radius: width * 0.25,
+color: selectedTemplate === "aurora" ? "#36e5d3" : "#167eff"
+}
+];
+
+circles.forEach((circle) => {
+const gradient = ctx.createRadialGradient(
+circle.x,
+circle.y,
+0,
+circle.x,
+circle.y,
+circle.radius
+);
+
+gradient.addColorStop(0, hexToRgba(circle.color, 0.23));
+gradient.addColorStop(1, hexToRgba(circle.color, 0));
+
+ctx.fillStyle = gradient;
+ctx.fillRect(0, 0, width, height);
+
+});
+
+ctx.save();
+ctx.strokeStyle = "rgba(145, 160, 255, 0.06)";
+ctx.lineWidth = 1;
+
+const gridSize = 54;
+
+for (let x = 0; x <= width; x += gridSize) {
+ctx.beginPath();
+ctx.moveTo(x, 0);
+ctx.lineTo(x, height);
+ctx.stroke();
+}
+
+for (let y = 0; y <= height; y += gridSize) {
+ctx.beginPath();
+ctx.moveTo(0, y);
+ctx.lineTo(width, y);
+ctx.stroke();
+}
+
+ctx.restore();
+}
+
+function drawPaperPattern(width, height) {
+ctx.save();
+
+ctx.strokeStyle = "rgba(45, 68, 100, 0.07)";
+ctx.lineWidth = 1;
+
+for (let y = 45; y < height; y += 42) {
+ctx.beginPath();
+ctx.moveTo(30, y);
+ctx.lineTo(width - 30, y);
+ctx.stroke();
+}
+
+ctx.restore();
+}
+
+function drawHeader(width) {
+const centerX = width / 2;
+
+const logoSize = Math.min(85, width * 0.085);
+const logoY = 60;
+
+ctx.save();
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+
+ctx.font = "900 ${Math.min(38, width * 0.036)}px Cairo, sans-serif";
+ctx.fillStyle = getTextColor();
+
+ctx.fillText("MISSION EDU", centerX, logoY + logoSize + 22);
+
+ctx.font = "500 ${Math.min(22, width * 0.02)}px Cairo, sans-serif";
+ctx.fillStyle = selectedTemplate === "paper"
+? "#52627e"
+: "#a9b3d6";
+
+ctx.fillText("تعلّم • تحدَّ • انتصر", centerX, logoY + logoSize + 62);
+
+ctx.restore();
+
+// لا يتم تضمين صورة اللوجو داخل Canvas تلقائيًا؛
+// يتم رسم اسم المنصة حتى يظل التوليد مستقلًا عن تحميل الصور الخارجية.
+}
+
+function drawOptionCard({
+x,
+y,
+width,
+height,
+text,
+letter,
+index,
+isCorrect,
+fontSize,
+padding
+}) {
+const cardColor = selectedTemplate === "paper"
+? "rgba(255, 255, 255, 0.72)"
+: "rgba(14, 20, 43, 0.78)";
+
+drawRoundedRect(
+x,
+y,
+width,
+height,
+22,
+isCorrect
+? selectedTemplate === "paper"
+? "rgba(33, 153, 105, 0.16)"
+: "rgba(43, 211, 151, 0.16)"
+: cardColor
+);
+
+ctx.save();
+
+ctx.strokeStyle = isCorrect
+? "#42dfa8"
+: selectedTemplate === "paper"
+? "rgba(61, 83, 115, 0.19)"
+: "rgba(145, 160, 255, 0.17)";
+
+ctx.lineWidth = isCorrect ? 4 : 2;
+
+roundedPath(x, y, width, height, 22);
+ctx.stroke();
+
+const circleSize = Math.min(61, height * 0.58);
+const circleX = x + width - padding - circleSize / 2;
+const circleY = y + height / 2;
+
+ctx.beginPath();
+ctx.arc(circleX, circleY, circleSize / 2, 0, Math.PI * 2);
+
+const optionColors = ["#9b5cff", "#477dff", "#16b995", "#e96b9c"];
+
+ctx.fillStyle = isCorrect
+? "#21b98b"
+: selectedTemplate === "paper"
+? ["#e6d8ff", "#d8e6ff", "#d3f5e9", "#f8dce8"][index]
+: hexToRgba(optionColors[index], 0.22);
+
+ctx.fill();
+
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+ctx.fillStyle = isCorrect
+? "#ffffff"
+: selectedTemplate === "paper"
+? ["#7040b7", "#2b5fb8", "#128a70", "#b34370"][index]
+: "#ffffff";
+
+ctx.font = "900 ${Math.min(30, circleSize * 0.48)}px Cairo, sans-serif";
+ctx.fillText(letter, circleX, circleY + 1);
+
+const textRight = circleX - circleSize / 2 - 22;
+const textLeft = x + padding;
+const maxTextWidth = textRight - textLeft;
+
+const textLines = wrapText(text, maxTextWidth, fontSize, 700);
+const lineHeight = fontSize * 1.42;
+const maxLines = Math.max(
+1,
+Math.floor((height - 20) / lineHeight)
+);
+
+const visibleLines = textLines.slice(0, maxLines);
+const totalTextHeight = visibleLines.length * lineHeight;
+
+let textY = y + (height - totalTextHeight) / 2 + lineHeight / 2;
+
+ctx.textAlign = "right";
+ctx.textBaseline = "middle";
+ctx.fillStyle = selectedTemplate === "paper" ? "#24334b" : "#f2f5ff";
+ctx.font = "700 ${fontSize}px Cairo, sans-serif";
+
+visibleLines.forEach((line) => {
+ctx.fillText(line, textRight, textY, maxTextWidth);
+textY += lineHeight;
+});
+
+if (isCorrect) {
+ctx.textAlign = "left";
+ctx.textBaseline = "top";
+ctx.fillStyle = "#42dfa8";
+ctx.font = "700 17px Cairo, sans-serif";
+ctx.fillText("✓", x + 17, y + 10);
+}
+
+ctx.restore();
+}
+
+function drawFooter(width, height, watermark) {
+ctx.save();
+ctx.textAlign = "center";
+ctx.textBaseline = "middle";
+
+if (watermark) {
+ctx.fillStyle = selectedTemplate === "paper"
+? "rgba(40, 56, 84, 0.68)"
+: "rgba(220, 227, 255, 0.65)";
+
+ctx.font = `700 ${Math.min(25, width * 0.023)}px Cairo, sans-serif`;
+ctx.fillText(watermark, width / 2, height - 65, width - 100);
+
+} else {
+ctx.fillStyle = selectedTemplate === "paper"
+? "rgba(40, 56, 84, 0.45)"
+: "rgba(220, 227, 255, 0.45)";
+
+ctx.font = `600 ${Math.min(20, width * 0.019)}px Cairo, sans-serif`;
+ctx.fillText("MISSION EDU", width / 2, height - 45);
+
+}
+
+ctx.restore();
+}
+
+function drawRoundedRect(x, y, width, height, radius, fillColor) {
+roundedPath(x, y, width, height, radius);
+
+if (fillColor !== "rgba(0,0,0,0)") {
+ctx.fillStyle = fillColor;
+ctx.fill();
+}
+}
+
+function roundedPath(x, y, width, height, radius) {
+const r = Math.min(radius, width / 2, height / 2);
+
+ctx.beginPath();
+ctx.moveTo(x + r, y);
+ctx.lineTo(x + width - r, y);
+ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+ctx.lineTo(x + width, y + height - r);
+ctx.quadraticCurveTo(
+x + width,
+y + height,
+x + width - r,
+y + height
+);
+ctx.lineTo(x + r, y + height);
+ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+ctx.lineTo(x, y + r);
+ctx.quadraticCurveTo(x, y, x + r, y);
+ctx.closePath();
+}
+
+function wrapText(text, maxWidth, fontSize, fontWeight = 700) {
+ctx.save();
+ctx.font = "${fontWeight} ${fontSize}px Cairo, sans-serif";
+
+const paragraphs = String(text).split("\n");
+const lines = [];
+
+paragraphs.forEach((paragraph) => {
+const words = paragraph.split(/\s+/).filter(Boolean);
+
+if (!words.length) {
+  lines.push("");
+  return;
+}
+
+let currentLine = "";
+
+words.forEach((word) => {
+  let candidate = currentLine ? `${currentLine} ${word}` : word;
+
+  if (ctx.measureText(candidate).width <= maxWidth) {
+    currentLine = candidate;
+    return;
+  }
+
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+
+  if (ctx.measureText(word).width <= maxWidth) {
+    currentLine = word;
+    return;
+  }
+
+  let part = "";
+
+  for (const character of word) {
+    const nextPart = part + character;
+
+    if (
+      ctx.measureText(nextPart).width > maxWidth &&
+      part
+    ) {
+      lines.push(part);
+      part = character;
     } else {
-        updateCounter();
-        draw();
+      part = nextPart;
     }
-})();
+  }
+
+  currentLine = part;
+});
+
+if (currentLine) {
+  lines.push(currentLine);
+}
+
+});
+
+ctx.restore();
+
+return lines.length ? lines : [""];
+}
+
+function getCardColor() {
+return selectedTemplate === "paper"
+? "rgba(255, 255, 255, 0.82)"
+: selectedTemplate === "aurora"
+? "rgba(17, 31, 59, 0.78)"
+: "rgba(16, 22, 49, 0.86)";
+}
+
+function getAccentColor() {
+if (selectedTemplate === "paper") return "#477dff";
+if (selectedTemplate === "aurora") return "#d16aff";
+return "#9b5cff";
+}
+
+function getTextColor() {
+return selectedTemplate === "paper" ? "#24334b" : "#f3f5ff";
+}
+
+function hexToRgba(hex, alpha) {
+const normalized = hex.replace("#", "");
+
+const bigint = parseInt(normalized, 16);
+const red = (bigint >> 16) & 255;
+const green = (bigint >> 8) & 255;
+const blue = bigint & 255;
+
+return "rgba(${red}, ${green}, ${blue}, ${alpha})";
+}
+
+function showToast(message) {
+toast.textContent = message;
+toast.classList.add("show");
+
+clearTimeout(toastTimer);
+
+toastTimer = setTimeout(() => {
+toast.classList.remove("show");
+}, 2800);
+}

@@ -1,0 +1,22 @@
+{
+"id": "/",
+"name": "MISSION EDU - مولد صور الأسئلة",
+"short_name": "مولد الاسئله",
+"description": "أنشئ صور أسئلة احترافية بسهولة.",
+"lang": "ar",
+"dir": "rtl",
+"start_url": "/",
+"scope": "/",
+"display": "standalone",
+"orientation": "portrait",
+"background_color": "#090b18",
+"theme_color": "#090b18",
+"icons": [
+{
+"src": "/logo.png",
+"sizes": "512x512",
+"type": "image/png",
+"purpose": "any"
+}
+]
+}
