@@ -1,263 +1,159 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090b18">
-  <meta name="description" content="أنشئ صور أسئلة احترافية بسهولة مع MISSION EDU.">
-  <title>مولّد صور الأسئلة | MISSION EDU</title>  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/png" href="/logo.png">
-  <link rel="apple-touch-icon" href="/logo.png">
-  <link rel="stylesheet" href="/style.css">  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <meta name="theme-color" content="#101329">
+  <meta name="description" content="مولد صور الأسئلة الاحترافي من MISSION EDU">
+  <title>مولد الأسئلة | MISSION EDU</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-</head><body>
-  <div class="background-effects" aria-hidden="true">
-    <div class="glow glow-one"></div>
-    <div class="glow glow-two"></div>
-    <div class="grid-overlay"></div>
-  </div>  <header class="topbar">
-    <a href="/" class="brand" aria-label="MISSION EDU">
-      <img src="/logo.png" alt="MISSION EDU" class="brand-logo">
-      <div class="brand-text">
-        <strong>MISSION <span>EDU</span></strong>
-        <small>تعلّم • تحدَّ • انتصر</small>
-      </div>
-    </a><span class="status-badge">
-  <span class="status-dot"></span>
-  مجاني بالكامل
-</span>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-  </header>  <main class="container">
-    <section class="hero">
-      <div class="hero-badge">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        صمّم سؤالك بطريقتك
-      </div>  <h1>حوّل سؤالك إلى <span>صورة احترافية</span></h1>
+<body>
+  <header class="topbar">
+    <a href="#" class="brand">
+      <img src="logo.png" alt="MISSION EDU" onerror="this.style.display='none'">
+      <span>MISSION <b>EDU</b></span>
+    </a>
+    <span class="top-badge">QUESTION STUDIO</span>
+  </header>
 
-  <p>
-    اكتب السؤال والاختيارات، اختار التصميم المناسب، ونزّل صورتك
-    بجودة عالية في ثوانٍ — من غير ذكاء اصطناعي أو اشتراكات.
-  </p>
-</section>
-
-<section class="workspace">
-  <div class="editor panel">
-    <div class="section-heading">
-      <div class="heading-icon">
-        <i class="fa-solid fa-pen-to-square"></i>
-      </div>
-      <div>
-        <h2>بيانات السؤال</h2>
-        <p>اكتب المحتوى اللي عايز يظهر في الصورة</p>
-      </div>
-    </div>
-
-    <form id="questionForm">
-      <label for="question">نص السؤال <span class="required">*</span></label>
-      <textarea
-        id="question"
-        placeholder="اكتب السؤال هنا..."
-        rows="4"
-        maxlength="1200"
-        required
-      ></textarea>
-
-      <div class="field-meta">
-        <span>اكتب السؤال بوضوح</span>
-        <span id="questionCount">0 / 1200</span>
-      </div>
-
-      <div class="divider"></div>
-
-      <div class="options-title">
-        <div>
-          <h3>الاختيارات</h3>
-          <p>اكتب الاختيارات الأربعة</p>
-        </div>
-        <span class="options-count">4 اختيارات</span>
-      </div>
-
-      <div class="option-field">
-        <span class="option-letter option-a">أ</span>
-        <input id="optionA" type="text" placeholder="الاختيار الأول" maxlength="300" required>
-      </div>
-
-      <div class="option-field">
-        <span class="option-letter option-b">ب</span>
-        <input id="optionB" type="text" placeholder="الاختيار الثاني" maxlength="300" required>
-      </div>
-
-      <div class="option-field">
-        <span class="option-letter option-c">ج</span>
-        <input id="optionC" type="text" placeholder="الاختيار الثالث" maxlength="300" required>
-      </div>
-
-      <div class="option-field">
-        <span class="option-letter option-d">د</span>
-        <input id="optionD" type="text" placeholder="الاختيار الرابع" maxlength="300" required>
-      </div>
-
-      <div class="divider"></div>
-
-      <label for="correctAnswer">
-        الإجابة الصحيحة
-        <span class="optional-label">اختياري</span>
-      </label>
-
-      <select id="correctAnswer">
-        <option value="">بدون تحديد إجابة صحيحة</option>
-        <option value="A">الاختيار الأول (أ)</option>
-        <option value="B">الاختيار الثاني (ب)</option>
-        <option value="C">الاختيار الثالث (ج)</option>
-        <option value="D">الاختيار الرابع (د)</option>
-      </select>
-
-      <p class="hint">
-        <i class="fa-regular fa-lightbulb"></i>
-        لو مش عايز تميّز إجابة صحيحة، سيب الاختيار الافتراضي.
-      </p>
-
-      <div class="divider"></div>
-
-      <div class="section-subheading">
-        <h3>شكل الصورة</h3>
-        <p>اختار القالب المناسب</p>
-      </div>
-
-      <div class="template-grid">
-        <button type="button" class="template-card active" data-template="neon">
-          <span class="template-preview preview-neon">
-            <span></span><span></span><span></span>
-          </span>
-          <strong>Neon</strong>
-          <small>سايبر مستقبلي</small>
-        </button>
-
-        <button type="button" class="template-card" data-template="aurora">
-          <span class="template-preview preview-aurora">
-            <span></span><span></span><span></span>
-          </span>
-          <strong>Aurora</strong>
-          <small>تدرجات مضيئة</small>
-        </button>
-
-        <button type="button" class="template-card" data-template="paper">
-          <span class="template-preview preview-paper">
-            <span></span><span></span><span></span>
-          </span>
-          <strong>Paper</strong>
-          <small>ورقي أنيق</small>
-        </button>
-      </div>
-
-      <div class="divider"></div>
-
-      <label for="watermark">
-        العلامة المائية
-        <span class="optional-label">اختياري</span>
-      </label>
-
-      <input
-        id="watermark"
-        type="text"
-        placeholder="مثال: MISSION EDU"
-        maxlength="80"
-      >
-
-      <label for="imageSize" class="size-label">مقاس الصورة</label>
-      <select id="imageSize">
-        <option value="square">مربع — 1080 × 1080</option>
-        <option value="story">ستوري — 1080 × 1920</option>
-        <option value="landscape">أفقي — 1200 × 675</option>
-      </select>
-
-      <button type="submit" class="generate-button" id="generateButton">
-        <i class="fa-solid fa-wand-magic-sparkles"></i>
-        <span>إنشاء الصورة</span>
-      </button>
-
-      <button type="button" class="reset-button" id="resetButton">
-        <i class="fa-solid fa-rotate-left"></i>
-        مسح البيانات
-      </button>
-    </form>
-  </div>
-
-  <div class="preview-column">
-    <section class="preview-panel panel">
+  <main class="layout">
+    <section class="editor panel">
       <div class="section-heading">
-        <div class="heading-icon preview-heading-icon">
-          <i class="fa-regular fa-image"></i>
-        </div>
         <div>
-          <h2>معاينة الصورة</h2>
-          <p>شوف النتيجة قبل التنزيل</p>
+          <span class="eyebrow">MISSION EDU STUDIO</span>
+          <h1>صمّم سؤالك</h1>
+          <p>حوّل أي سؤال لصورة احترافية جاهزة للنشر.</p>
+        </div>
+        <div class="heading-icon">✦</div>
+      </div>
+
+      <label class="field-label" for="question">السؤال</label>
+      <textarea id="question" rows="4" placeholder="اكتب السؤال هنا..."></textarea>
+
+      <div class="options-heading">
+        <label class="field-label">الاختيارات</label>
+        <span class="muted">اكتب الاختيارات الأربعة</span>
+      </div>
+
+      <div class="option-input">
+        <span class="option-letter letter-a">أ</span>
+        <input id="optionA" type="text" placeholder="الاختيار الأول">
+      </div>
+
+      <div class="option-input">
+        <span class="option-letter letter-b">ب</span>
+        <input id="optionB" type="text" placeholder="الاختيار الثاني">
+      </div>
+
+      <div class="option-input">
+        <span class="option-letter letter-c">ج</span>
+        <input id="optionC" type="text" placeholder="الاختيار الثالث">
+      </div>
+
+      <div class="option-input">
+        <span class="option-letter letter-d">د</span>
+        <input id="optionD" type="text" placeholder="الاختيار الرابع">
+      </div>
+
+      <div class="divider"></div>
+
+      <label class="field-label" for="correct">الإجابة الصحيحة (اختياري)</label>
+      <select id="correct">
+        <option value="">بدون تحديد إجابة صحيحة</option>
+        <option value="0">أ — الاختيار الأول</option>
+        <option value="1">ب — الاختيار الثاني</option>
+        <option value="2">ج — الاختيار الثالث</option>
+        <option value="3">د — الاختيار الرابع</option>
+      </select>
+
+      <label class="field-label" for="watermark">العلامة المائية (اختياري)</label>
+      <input id="watermark" type="text" placeholder="مثال: MISSION EDU">
+
+      <div class="settings-grid">
+        <div>
+          <label class="field-label" for="template">التصميم</label>
+          <select id="template">
+            <option value="neon">Neon — الافتراضي</option>
+            <option value="purple">Purple Glow</option>
+            <option value="minimal">Minimal Dark</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="field-label" for="format">مقاس الصورة</label>
+          <select id="format">
+            <option value="square">مربع — 1080 × 1080</option>
+            <option value="story">ستوري — 1080 × 1350</option>
+            <option value="portrait">طولي — 1080 × 1920</option>
+            <option value="landscape">أفقي — 1200 × 675</option>
+          </select>
         </div>
       </div>
 
-      <div class="canvas-stage" id="canvasStage">
-        <canvas id="questionCanvas" width="1080" height="1080"></canvas>
+      <div class="action-buttons">
+        <button id="generateBtn" class="primary-button" type="button">
+          <span>✦</span> توليد الصورة
+        </button>
+        <button id="downloadBtn" class="secondary-button" type="button">
+          تنزيل PNG ↓
+        </button>
+      </div>
 
-        <div class="preview-placeholder" id="previewPlaceholder">
-          <div class="placeholder-icon">
-            <i class="fa-regular fa-images"></i>
-          </div>
+      <p id="status" class="status" aria-live="polite">
+        اكتب السؤال واضغط على توليد الصورة.
+      </p>
+    </section>
+
+    <section class="preview-section">
+      <div class="preview-heading">
+        <div>
+          <span class="eyebrow">LIVE PREVIEW</span>
+          <h2>معاينة التصميم</h2>
+        </div>
+        <span class="live-indicator"><i></i> جاهز للتوليد</span>
+      </div>
+
+      <div class="canvas-wrapper">
+        <canvas id="previewCanvas" width="540" height="540"></canvas>
+        <div id="previewPlaceholder" class="preview-placeholder">
+          <div class="placeholder-icon">✦</div>
           <h3>صورتك هتظهر هنا</h3>
-          <p>اكتب السؤال والاختيارات، وبعدها اضغط إنشاء الصورة.</p>
+          <p>اكتب السؤال والاختيارات ثم اضغط على توليد الصورة.</p>
         </div>
       </div>
 
-      <div class="preview-details">
-        <span><i class="fa-solid fa-check-circle"></i> جودة عالية</span>
-        <span><i class="fa-solid fa-download"></i> تحميل PNG</span>
-        <span><i class="fa-solid fa-shield-halved"></i> بدون رفع بياناتك</span>
-      </div>
-
-      <button type="button" id="downloadButton" class="download-button" disabled>
-        <i class="fa-solid fa-download"></i>
-        تنزيل الصورة PNG
-      </button>
-
-      <p class="download-note">كل التصميم بيتعمل على جهازك، ومش محتاج حساب.</p>
-    </section>
-
-    <section class="info-card">
-      <div class="info-icon">
-        <i class="fa-solid fa-bolt"></i>
-      </div>
-      <div>
-        <h3>سريع وبسيط</h3>
-        <p>أنشئ صور الأسئلة من غير API أو قاعدة بيانات، واحتفظ بملفاتك على جهازك.</p>
+      <div class="preview-tip">
+        <span>✦</span>
+        <p>الصورة النهائية بتتولد بدقة عالية ومناسبة للنشر على السوشيال ميديا.</p>
       </div>
     </section>
-  </div>
-</section>
+  </main>
 
-  </main>  <footer class="site-footer">
-    <div class="footer-brand">
-      <img src="/logo.png" alt="" class="footer-logo">
-      <span>MISSION EDU</span>
-    </div><p>تعلّم... تحدَّ... انتصر</p>
+  <footer>
+    <div class="footer-brand">MISSION <b>EDU</b></div>
+    <p>تعلّم • تحدَّ • انتصر</p>
+    <a href="https://wa.me/201128351702?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%A7%D9%84%D8%A7%D8%B3%D8%AA%D9%81%D8%B3%D8%A7%D8%B1%20%D8%B9%D9%86%20%D8%AA%D8%B5%D9%85%D9%8A%D9%85%20%D8%A7%D9%84%D9%85%D9%88%D8%A7%D9%82%D8%B9"
+       target="_blank" rel="noopener noreferrer">
+      Developed by EL-sayed Hasan
+    </a>
+  </footer>
 
-<a
-  class="developer-link"
-  href="https://wa.me/201128351702?text=%D8%A7%D9%84%D8%B3%D9%84%D8%A7%D9%85%20%D8%B9%D9%84%D9%8A%D9%83%D9%85%D8%8C%20%D8%B9%D8%A7%D9%8A%D8%B2%20%D8%A3%D8%AA%D9%88%D8%A7%D8%B5%D9%84%20%D9%85%D8%B9%D8%A7%D9%83%20%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D8%A7%D9%84%D9%85%D9%88%D9%82%D8%B9."
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <i class="fa-brands fa-whatsapp"></i>
-  Developed by EL-sayed Hasan
-</a>
+  <script src="script.js"></script>
 
-<small>© <span id="currentYear"></span> جميع الحقوق محفوظة</small>
-
-  </footer>  <div class="toast" id="toast" role="status" aria-live="polite"></div>  <script src="/script.js"></script>  <script>
-    if ("serviceWorker" in navigator) {
+  <script>
+    if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/service-worker.js")
-          .catch(error => console.error("Service Worker:", error));
+        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
       });
     }
-  </script></body>
+  </script>
+</body>
 </html>
